@@ -8,7 +8,9 @@ function HeaderSection() {
  <>
  <TopSection/>
  <MidSection/>
+ <div className='sticky top-0 bg-white z-10'>
  <NavbarSection/>
+ </div>
  
  </>
   )

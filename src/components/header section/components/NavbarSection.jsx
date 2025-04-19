@@ -15,12 +15,12 @@ function NavbarSection() {
         </div>
 
         <div className='flex items-center gap-8'>
-            <Link className='text-lg font-semibold'>Home</Link>
-            <Link className='text-lg font-semibold'>All Products</Link>
-            <Link className='text-lg font-semibold'>FAQ</Link>
-            <Link className='text-lg font-semibold'>About Us</Link>
-            <Link className='text-lg font-semibold'>Contact Us</Link>
-            <Link className='text-lg font-semibold'>Blog</Link>
+            <Link to="/" className='text-xl font-semibold'>Home</Link>
+            <Link to="/shop" className='text-xl font-semibold'>All Products</Link>
+            <Link to="/FAQ" className='text-xl font-semibold'>FAQ</Link>
+            <Link to="/about" className='text-xl font-semibold'>About Us</Link>
+            <Link to="/contact" className='text-xl font-semibold'>Contact Us</Link>
+            <Link to="/blog" className='text-xl font-semibold'>Blog</Link>
         </div>
 
         <div>
