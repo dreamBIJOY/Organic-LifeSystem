@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import HeroSection from './components/Hero Section/HeroSection'
 import ShopByCategorie from './components/Shop By Categorie/ShopByCategorie'
 import PopularProducts from './components/Popular Products/PopularProducts'
@@ -10,8 +10,12 @@ import FeaturedProducts from './components/Featured Products/FeaturedProducts'
 import AdsFour from './components/Ads/AdsFour'
 import OurClients from './components/Our Clients/OurClients'
 import LastSection from './components/Last Section/LastSection'
+import BackToTopButton from './components/Back To Top Button/BackToTopButton'
 
 function HomePage() {
+  useEffect(()=>{
+    window.scrollTo(0,0)
+  },[])
   return (
    <>
    <HeroSection/>
@@ -25,6 +29,7 @@ function HomePage() {
    <AdsFour/>
    <OurClients/>
    <LastSection/>
+   <BackToTopButton/>
    </>
   )
 }
