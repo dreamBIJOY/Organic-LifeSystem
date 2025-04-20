@@ -5,9 +5,9 @@ function NewArrivalProducts() {
   const [categories, setCategories] = useState([]);
   const [products, setProducts] = useState([]);
   const scrollRef = useRef(null);
-  const itemWidth = 290; // প্রতিটি প্রোডাক্টের প্রস্থ
+  const itemWidth = 320; // প্রতিটি প্রোডাক্টের প্রস্থ + গ্যাপ
   const [categorieName, setCategorieName] = useState(null);
-  
+  const [showButtons, setShowButtons] = useState(false);
 
   useEffect(() => {
     fetch("/Categories.json")
@@ -21,25 +21,70 @@ function NewArrivalProducts() {
       .then((item) => setProducts(item));
   }, []);
 
-  const handelCategorieName = (cName) => {
-    setCategorieName(cName.title)
-  }
+  const handleCategoryClick = (cName) => {
+    setCategorieName(cName.title);
+    scrollToStart(); // ক্যাটাগরি ক্লিক করলে প্রথম প্রোডাক্টে স্ক্রল করবে
+  };
 
-  // Scroll left
+  // স্ক্রল বাটন দেখানো হবে কিনা তা চেক করে
+  useEffect(() => {
+    if (newArrivalProducts.length > 6) {
+      setShowButtons(true);
+    } else {
+      setShowButtons(false);
+    }
+    scrollToStart(); // ক্যাটাগরি বা প্রোডাক্ট পরিবর্তন হলে প্রথমে স্ক্রল করবে
+  }, [categorieName, products]);
+
+  // প্রথম প্রোডাক্টে স্ক্রল করবে
+  const scrollToStart = () => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollTo({ left: 0, behavior: "smooth" });
+    }
+  };
+
+  // শেষ প্রোডাক্টে স্ক্রল করবে (দ্রুত)
+  const scrollToEnd = () => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollTo({
+        left: scrollRef.current.scrollWidth,
+        behavior: "auto"
+      });
+    }
+  };
+
+  // বামে স্ক্রল করবে (লুপ সহ)
   const scrollLeft = () => {
     if (scrollRef.current) {
-      scrollRef.current.scrollBy({ left: -itemWidth, behavior: "smooth" });
+      const { scrollLeft } = scrollRef.current;
+      if (scrollLeft === 0) {
+        scrollToEnd(); // প্রথমে থাকলে শেষে যাবে
+      } else {
+        scrollRef.current.scrollBy({ left: -itemWidth, behavior: "smooth" });
+      }
     }
   };
 
-  // Scroll right
+  // ডানে স্ক্রল করবে (লুপ সহ)
   const scrollRight = () => {
     if (scrollRef.current) {
-      scrollRef.current.scrollBy({ left: itemWidth, behavior: "smooth" });
+      const { scrollLeft, clientWidth, scrollWidth } = scrollRef.current;
+      if (scrollLeft + clientWidth >= scrollWidth - 10) {
+        scrollToStart(); // শেষে থাকলে প্রথমে যাবে
+      } else {
+        scrollRef.current.scrollBy({ left: itemWidth, behavior: "smooth" });
+      }
     }
   };
 
-  const newArrivalProducts = categorieName && categorieName != "All" ? products.filter((product) => product.featured === "New Products" && product.category === categorieName) : products.filter((product) => product.featured === "New Products")
+  // ফিল্টার্ড প্রোডাক্ট লিস্ট
+  const newArrivalProducts =
+    categorieName && categorieName !== "All"
+      ? products.filter(
+          (product) =>
+            product.featured === "New Products" && product.category === categorieName
+        )
+      : products.filter((product) => product.featured === "New Products");
 
   return (
     <div>
@@ -51,10 +96,15 @@ function NewArrivalProducts() {
 
           <div className="flex items-center gap-6">
             {categories.map((categorie, index) => (
-              <div key={index} className="">
-                <button onClick={()=>handelCategorieName(categorie)} className="btn p-6 text-xl font-semibold hover:text-green-700  cursor-pointer">
+              <div key={index}>
+                <button
+                  onClick={() => handleCategoryClick(categorie)}
+                  className={`btn p-6 text-xl font-semibold hover:text-green-700 cursor-pointer ${
+                    categorieName === categorie.title ? "text-green-700" : ""
+                  }`}
+                >
                   {categorie.title}
-                </button >
+                </button>
               </div>
             ))}
           </div>
@@ -64,18 +114,19 @@ function NewArrivalProducts() {
           <hr className="text-gray-200" />
         </div>
 
-        {/* Products List */}
+        {/* প্রোডাক্ট লিস্ট */}
         <div className="relative mt-6">
           <div
             ref={scrollRef}
-            className="flex overflow-hidden gap-4"
+            className="flex overflow-x-hidden gap-4 scroll-smooth"
             style={{ scrollBehavior: "smooth" }}
           >
             {newArrivalProducts.map((product, index) => (
               <div
                 key={index}
-                className="w-[320px] h-[520px] border border-gray-200 rounded-xl p-6 flex flex-col justify-between"
+                className="w-[320px] h-[520px] border border-gray-200 rounded-xl p-6 flex flex-col justify-between flex-shrink-0"
               >
+                {/* প্রোডাক্ট ডিটেইলস */}
                 <div>
                   <div className="w-[250px] h-[250px] object-cover mx-auto">
                     <img
@@ -84,26 +135,12 @@ function NewArrivalProducts() {
                       alt=""
                     />
                   </div>
-
-                  <p className="text-lg text-gray-800 mt-2">
-                    {product.category}
-                  </p>
-
-                  <h2 className="text-xl truncate mt-2 font-bold">
-                    {product.name}
-                  </h2>
-
+                  <p className="text-lg text-gray-800 mt-2">{product.category}</p>
+                  <h2 className="text-xl truncate mt-2 font-bold">{product.name}</h2>
                   <p className="text-lg text-gray-800 truncate mt-3">{product.description}</p>
-
-                  <p className="text-[18px] mt-">
-                    {"⭐".repeat(Math.round(product.rating))}
-                  </p>
-
-                  <p className="text-xl font-bold text-red-700 mt-2">
-                    ${product.price}
-                  </p>
+                  <p className="text-[18px] mt-">{"⭐".repeat(Math.round(product.rating))}</p>
+                  <p className="text-xl font-bold text-red-700 mt-2">${product.price}</p>
                 </div>
-
                 <button className="btn w-full mt-4 py-3 text-lg font-semibold">
                   ADD TO CART
                 </button>
@@ -111,24 +148,27 @@ function NewArrivalProducts() {
             ))}
           </div>
 
-          {/* Scroll Buttons */}
-          <div className="absolute top-1/2 left-0 transform -translate-y-1/2">
-            <p
-              className="w-[50px] h-[50px] bg-gray-200 rounded-lg hover:bg-green-700 flex items-center justify-center group cursor-pointer"
-              onClick={scrollLeft} // Scroll left action
-            >
-              <IoIosArrowBack size={35} className="group-hover:text-white" />
-            </p>
-          </div>
-
-          <div className="absolute top-1/2 right-0 transform -translate-y-1/2">
-            <p
-              className="w-[50px] h-[50px] bg-gray-200 rounded-lg hover:bg-green-700 flex items-center justify-center group cursor-pointer"
-              onClick={scrollRight} // Scroll right action
-            >
-              <IoIosArrowForward size={35} className="group-hover:text-white" />
-            </p>
-          </div>
+          {/* স্ক্রল বাটন (৬টির বেশি প্রোডাক্ট থাকলে দেখাবে) */}
+          {showButtons && (
+            <>
+              <div className="absolute top-1/2 left-0 transform -translate-y-1/2">
+                <button
+                  className="w-[50px] h-[50px] bg-gray-200 rounded-lg hover:bg-green-700 flex items-center justify-center group cursor-pointer transition-colors"
+                  onClick={scrollLeft}
+                >
+                  <IoIosArrowBack size={35} className="group-hover:text-white" />
+                </button>
+              </div>
+              <div className="absolute top-1/2 right-0 transform -translate-y-1/2">
+                <button
+                  className="w-[50px] h-[50px] bg-gray-200 rounded-lg hover:bg-green-700 flex items-center justify-center group cursor-pointer transition-colors"
+                  onClick={scrollRight}
+                >
+                  <IoIosArrowForward size={35} className="group-hover:text-white" />
+                </button>
+              </div>
+            </>
+          )}
         </div>
       </div>
     </div>

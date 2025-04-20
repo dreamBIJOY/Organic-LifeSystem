@@ -5,6 +5,8 @@ function PopularProducts() {
   const [categories, setCategories] = useState([]);
   const [products, setProducts] = useState([]);
   const scrollRef = useRef(null);
+  const [showButtons, setShowButtons] = useState(false);
+  const [isScrollEnd, setIsScrollEnd] = useState(false);
   const itemWidth = 290; // প্রতিটি প্রোডাক্টের প্রস্থ
   const [categorieName, setCategorieName] = useState(null);
 
@@ -21,8 +23,12 @@ function PopularProducts() {
   }, []);
 
   const handelCategorieName = (cName) => {
-      setCategorieName(cName.title)
-  }
+    setCategorieName(cName.title);
+    // ক্যাটাগরি পরিবর্তন হলে স্ক্রলকে প্রথমে নিয়ে যাও
+    if (scrollRef.current) {
+      scrollRef.current.scrollTo({ left: 0, behavior: "smooth" });
+    }
+  };
 
   // Scroll left
   const scrollLeft = () => {
@@ -34,12 +40,52 @@ function PopularProducts() {
   // Scroll right
   const scrollRight = () => {
     if (scrollRef.current) {
-      scrollRef.current.scrollBy({ left: itemWidth, behavior: "smooth" });
+      // যদি স্ক্রল শেষে থাকে, তাহলে প্রথমে ফিরে যান
+      if (isScrollEnd) {
+        scrollRef.current.scrollTo({ left: 0, behavior: "smooth" });
+      } else {
+        // নাহলে পরবর্তী আইটেমে স্ক্রল করুন
+        scrollRef.current.scrollBy({ left: itemWidth, behavior: "smooth" });
+      }
     }
   };
 
-  const poularProducts = categorieName && categorieName != "All" ? products.filter(
-    (product) => product.featured === "Popular Products" && product.category === categorieName) : products.filter(product => product.featured === "Popular Products")
+  // স্ক্রল অবস্থা চেক করা
+  const checkScroll = () => {
+    if (scrollRef.current) {
+      const { scrollWidth, clientWidth, scrollLeft } = scrollRef.current;
+      // স্ক্রল শেষে পৌঁছালে
+      const endReached = scrollLeft + clientWidth >= scrollWidth - 10; // সামান্য টলারেন্স
+      setIsScrollEnd(endReached);
+      
+      // স্ক্রল শুরুতে থাকলে
+      const isStart = scrollLeft === 0;
+      
+      // শুধুমাত্র যখন প্রোডাক্ট ৬টির বেশি থাকে তখন বাটন দেখানো
+      const shouldShowButtons = poularProducts.length > 6;
+      setShowButtons(shouldShowButtons && (!endReached || !isStart));
+    }
+  };
+
+  useEffect(() => {
+    const container = scrollRef.current;
+    if (container) {
+      container.addEventListener("scroll", checkScroll);
+      // প্রথম লোডে চেক করুন
+      checkScroll();
+    }
+    return () => {
+      if (container) {
+        container.removeEventListener("scroll", checkScroll);
+      }
+    };
+  }, [products, categories, categorieName]);
+
+  const poularProducts = categorieName && categorieName != "All" 
+    ? products.filter(
+        (product) => product.featured === "Popular Products" && product.category === categorieName
+      ) 
+    : products.filter(product => product.featured === "Popular Products");
 
   return (
     <div>
@@ -52,9 +98,12 @@ function PopularProducts() {
           <div className="flex items-center gap-6">
             {categories.map((categorie, index) => (
               <div key={index} className="">
-                <button onClick={()=> handelCategorieName(categorie)} className="btn p-6 text-xl font-semibold hover:text-green-700  cursor-pointer">
+                <button 
+                  onClick={() => handelCategorieName(categorie)} 
+                  className="btn p-6 text-xl font-semibold hover:text-green-700 cursor-pointer"
+                >
                   {categorie.title}
-                </button >
+                </button>
               </div>
             ))}
           </div>
@@ -74,7 +123,7 @@ function PopularProducts() {
             {poularProducts.map((product, index) => (
               <div
                 key={index}
-                className="w-[320px] h-[520px] border border-gray-200 rounded-xl p-6 flex flex-col justify-between"
+                className="w-[320px] h-[520px] border border-gray-200 rounded-xl p-6 flex flex-col justify-between flex-shrink-0"
               >
                 <div>
                   <div className="w-[250px] h-[250px] object-cover mx-auto">
@@ -111,24 +160,28 @@ function PopularProducts() {
             ))}
           </div>
 
-          {/* Scroll Buttons */}
-          <div className="absolute top-1/2 left-0 transform -translate-y-1/2">
-            <p
-              className="w-[50px] h-[50px] bg-gray-200 rounded-lg hover:bg-green-700 flex items-center justify-center group cursor-pointer"
-              onClick={scrollLeft} // Scroll left action
-            >
-              <IoIosArrowBack size={35} className="group-hover:text-white" />
-            </p>
-          </div>
+          {/* Scroll Buttons - শুধুমাত্র যখন প্রোডাক্ট ৬টির বেশি থাকে */}
+          {showButtons && (
+            <>
+              <div className="absolute top-1/2 left-0 transform -translate-y-1/2">
+                <button
+                  className="w-[50px] h-[50px] bg-gray-200 rounded-lg hover:bg-green-700 flex items-center justify-center group cursor-pointer"
+                  onClick={scrollLeft}
+                >
+                  <IoIosArrowBack size={35} className="group-hover:text-white" />
+                </button>
+              </div>
 
-          <div className="absolute top-1/2 right-0 transform -translate-y-1/2">
-            <p
-              className="w-[50px] h-[50px] bg-gray-200 rounded-lg hover:bg-green-700 flex items-center justify-center group cursor-pointer"
-              onClick={scrollRight} // Scroll right action
-            >
-              <IoIosArrowForward size={35} className="group-hover:text-white" />
-            </p>
-          </div>
+              <div className="absolute top-1/2 right-0 transform -translate-y-1/2">
+                <button
+                  className="w-[50px] h-[50px] bg-gray-200 rounded-lg hover:bg-green-700 flex items-center justify-center group cursor-pointer"
+                  onClick={scrollRight}
+                >
+                  <IoIosArrowForward size={35} className="group-hover:text-white" />
+                </button>
+              </div>
+            </>
+          )}
         </div>
       </div>
     </div>

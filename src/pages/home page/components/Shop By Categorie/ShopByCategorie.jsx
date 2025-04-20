@@ -4,7 +4,7 @@ import { IoIosArrowForward, IoIosArrowBack } from "react-icons/io";
 function ShopByCategorie() {
     const [categories, setCategories] = useState([]);
     const scrollRef = useRef(null);
-    const itemWidth = 240 + 16;
+    // const itemWidth = 240 + 16;
 
     useEffect(() => {
         fetch("/Categories.json")
@@ -12,46 +12,46 @@ function ShopByCategorie() {
             .then(data => setCategories(data));
     }, []);
 
-    const scrollLeft = () => {
-        if (scrollRef.current) {
-            const container = scrollRef.current;
-            const newScrollPosition = container.scrollLeft - itemWidth;
+    // const scrollLeft = () => {
+    //     if (scrollRef.current) {
+    //         const container = scrollRef.current;
+    //         const newScrollPosition = container.scrollLeft - itemWidth;
 
-            if (newScrollPosition >= 0) {
-                container.scrollBy({ left: -itemWidth, behavior: 'smooth' });
-            }
-        }
-    };
+    //         if (newScrollPosition >= 0) {
+    //             container.scrollBy({ left: -itemWidth, behavior: 'smooth' });
+    //         }
+    //     }
+    // };
 
-    const scrollRight = () => {
-        if (scrollRef.current) {
-            const container = scrollRef.current;
-            const newScrollPosition = container.scrollLeft + itemWidth;
-            const maxScroll = container.scrollWidth - container.clientWidth;
+    // const scrollRight = () => {
+    //     if (scrollRef.current) {
+    //         const container = scrollRef.current;
+    //         const newScrollPosition = container.scrollLeft + itemWidth;
+    //         const maxScroll = container.scrollWidth - container.clientWidth;
 
-            if (newScrollPosition < maxScroll) {
-                container.scrollBy({ left: itemWidth, behavior: 'smooth' });
-            }
+    //         if (newScrollPosition < maxScroll) {
+    //             container.scrollBy({ left: itemWidth, behavior: 'smooth' });
+    //         }
         
-            else if (newScrollPosition >= maxScroll) {
-                container.scrollTo({ left: 0, behavior: 'smooth' });
-            }
-        }
-    };
+    //         else if (newScrollPosition >= maxScroll) {
+    //             container.scrollTo({ left: 0, behavior: 'smooth' });
+    //         }
+    //     }
+    // };
 
     return (
-        <div className='bg-[#fbf7f2] py-10'>
-            <div className='w-10/12 mx-auto pb-10'>
+        <div className='bg-[#fbf7f2] py-15'>
+            <div className='w-10/12 mx-auto'>
             <div className='flex items-center justify-between'>
                 <h1 className='text-3xl font-bold'>Shop By Category</h1>
-                <div className='flex items-center gap-6'>
+                {/* <div className='flex items-center gap-6'>
                     <p onClick={scrollLeft} className='w-[50px] h-[50px] bg-gray-200 rounded-lg hover:bg-green-700 flex items-center justify-center group'>
                         <IoIosArrowBack size={35} className='group-hover:text-white cursor-pointer' />
                     </p>
                     <p onClick={scrollRight} className='w-[50px] h-[50px] bg-gray-200 rounded-lg hover:bg-green-700 flex items-center justify-center group'>
                         <IoIosArrowForward size={35} className='group-hover:text-white cursor-pointer' />
                     </p>
-                </div>
+                </div> */}
             </div>
 
             <div className='mt-4'>
