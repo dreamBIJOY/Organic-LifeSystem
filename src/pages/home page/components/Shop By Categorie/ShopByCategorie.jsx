@@ -1,9 +1,12 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { IoIosArrowForward, IoIosArrowBack } from "react-icons/io";
+import { Link, useNavigate, useParams } from 'react-router-dom';
 
 function ShopByCategorie() {
     const [categories, setCategories] = useState([]);
     const scrollRef = useRef(null);
+    const { id } = useParams();
+    const navigate = useNavigate();
     // const itemWidth = 240 + 16;
 
     useEffect(() => {
@@ -64,6 +67,7 @@ function ShopByCategorie() {
                 className='flex gap-4 overflow-hidden mt-20 scroll-smooth justify-center'
             >
                 {categories.filter((_, index) => index !== 0).map((category, index) => (
+                   <Link to={`/shop/${category.id}`}>
                     <div
                         key={index}
                         className='w-[240px] h-[160px] bg-gray-200 rounded-xl p-4 hover:bg-white hover:border-2 border-green-300 hover:shadow-xl group cursor-pointer flex-shrink-0'
@@ -74,7 +78,7 @@ function ShopByCategorie() {
                         <h1 className='text-[21px] font-semibold text-center mt-3 text-gray-800 group-hover:text-black'>
                             {category.title}
                         </h1>
-                    </div>
+                    </div></Link>
                 ))}
             </div>
         </div>

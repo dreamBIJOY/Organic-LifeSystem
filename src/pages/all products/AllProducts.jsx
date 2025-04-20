@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import Image1 from "../../assets/All Products Image Components/Ad 1.jpg";
 import { Link } from "react-router-dom";
+import BackToTopButton from "../home page/components/Back To Top Button/BackToTopButton";
+import LastSection from "../home page/components/Last Section/LastSection";
 
 function AllProducts() {
   const [categories, setCategories] = useState([]);
@@ -19,6 +21,10 @@ function AllProducts() {
       .then((res) => res.json())
       .then((data) => setProducts(data));
   }, []);
+
+  useEffect(()=>{
+    window.scrollTo(0,0)
+  },[])
 
   const handleCategoryName = (category) => {
     setCategoryName(category.title);
@@ -117,7 +123,8 @@ function AllProducts() {
                   {product.featured}
                 </div>
               )}
-
+              <Link to={`/products-details/${product.id}`}>
+              
               <div className="flex-1 overflow-hidden">
                 <div className="w-[250px] h-[250px] object-cover mx-auto">
                   <img
@@ -139,7 +146,7 @@ function AllProducts() {
                 <p className="text-xl font-bold text-red-700 mt-2">
                   ${product.price}
                 </p>
-              </div>
+              </div></Link>
 
               <button className="btn w-full mt-4 py-3 text-lg font-semibold">
                 ADD TO CART
@@ -148,6 +155,10 @@ function AllProducts() {
           ))}
         </div>
       </div>
+    </div>
+    <div className="mt-10">
+    <LastSection/>
+    <BackToTopButton/>
     </div>
    </div>
   );

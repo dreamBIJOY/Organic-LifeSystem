@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
+import { Link } from "react-router-dom";
 
 function FeaturedProducts() {
   const [categories, setCategories] = useState([]);
@@ -119,7 +120,8 @@ function FeaturedProducts() {
                 key={index}
                 className="w-[320px] h-[520px] border border-gray-200 rounded-xl p-6 flex flex-col justify-between flex-shrink-0"
               >
-                <div>
+              <Link to={`/products-details/${product.id}`}>
+              <div>
                   <div className="w-[250px] h-[250px] object-cover mx-auto">
                     <img
                       className="w-full h-full object-cover rounded"
@@ -145,7 +147,7 @@ function FeaturedProducts() {
                   <p className="text-xl font-bold text-red-700 mt-2">
                     ${product.price}
                   </p>
-                </div>
+                </div></Link>
 
                 <button className="btn w-full mt-4 py-3 text-lg font-semibold">
                   ADD TO CART
