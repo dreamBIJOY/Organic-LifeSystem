@@ -93,7 +93,7 @@ function ContactPage() {
 
             <button
               type="submit"
-              className="bg-green-500 hover:bg-green-700 text-white font-semibold py-2 px-6 rounded"
+              className="bg-green-700 text-xl text-white font-semibold py-2 px-14 rounded"
             >
               SEND
             </button>

@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { useLocation, useNavigate, useParams } from "react-router-dom";
+import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
 import Img1 from "../../assets/Products Detelis/4.png"
 import Img2 from "../../assets/Products Detelis/2.png"
 import Img3 from "../../assets/Products Detelis/1.png"
 import RelatedProducts from "./RelatedProducts";
+
 
 
 function ProductsDetails() {
@@ -55,6 +56,12 @@ function ProductsDetails() {
 
   return (
   <div>
+      <p className="w-10/12 mx-auto mt-10">
+        <span className="text-xl text-gray-600">
+          <Link to="/">Home</Link> / <Link to='/shop'><span>All Products</span> / </Link>
+          <Link><span>{product.category}</span> / </Link> <span>{product.name}</span>
+        </span>
+      </p>
       <div className="w-10/12 mx-auto flex gap-40 py-20">
       <div className="w-4/10">
         <div className="w-[400px] h-[400px] p-8 border border-gray-200 rounded-lg">
@@ -160,6 +167,7 @@ function ProductsDetails() {
       </div>
     </div>
       <RelatedProducts id={id}/>
+      
   </div>
   );
 }

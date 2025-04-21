@@ -1,8 +1,9 @@
 import React, { useEffect, useRef, useState } from "react";
 import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
+import { MdRemoveRedEye } from "react-icons/md";
 import { Link } from "react-router-dom";
 
-function NewArrivalProducts() {
+function NewArrivalProducts({handleProductClick}) {
   const [categories, setCategories] = useState([]);
   const [products, setProducts] = useState([]);
   const scrollRef = useRef(null);
@@ -128,21 +129,41 @@ function NewArrivalProducts() {
                 className="w-[320px] h-[520px] border border-gray-200 rounded-xl p-6 flex flex-col justify-between flex-shrink-0"
               >
                 {/* প্রোডাক্ট ডিটেইলস */}
-               <Link to={`/products-details/${product.id}`}>
-               <div>
-                  <div className="w-[250px] h-[250px] object-cover mx-auto">
-                    <img
-                      className="w-full h-full object-cover rounded"
-                      src={product.image}
-                      alt=""
-                    />
-                  </div>
-                  <p className="text-lg text-gray-800 mt-2">{product.category}</p>
-                  <h2 className="text-xl truncate mt-2 font-bold">{product.name}</h2>
-                  <p className="text-lg text-gray-800 truncate mt-3">{product.description}</p>
-                  <p className="text-[18px] mt-">{"⭐".repeat(Math.round(product.rating))}</p>
-                  <p className="text-xl font-bold text-red-700 mt-2">${product.price}</p>
-                </div></Link>
+               <Link onClick={()=>handleProductClick()}
+                                 to={`/products-details/${product.id}`}
+                                 className="relative group block"
+                               >
+                                 {/* পুরো কন্টেন্ট যেটি হোভারে ব্লার হবে */}
+                                 <div className="group-hover:blur-sm transition-all duration-300">
+                                   <div className="flex-1 overflow-hidden">
+                                     <div className="w-[250px] h-[250px] object-cover mx-auto">
+                                       <img
+                                         className="w-full h-full object-cover rounded"
+                                         src={product.image}
+                                         alt={product.name}
+                                       />
+                                     </div>
+                                     <p className="text-lg text-gray-800 mt-2">
+                                       {product.category}
+                                     </p>
+                                     <h2 className="text-xl font-bold mt-2 truncate">
+                                       {product.name}
+                                     </h2>
+                                     <p className="text-lg text-gray-800 mt-3 truncate">
+                                       {product.description}
+                                     </p>
+                                     <p className="text-[18px] mt-2">
+                                       {"⭐".repeat(Math.round(product.rating))}
+                                     </p>
+                                     <p className="text-xl font-bold text-red-700 mt-2">
+                                       ${product.price}
+                                     </p>
+                                   </div>
+                                 </div>
+               
+                                 {/* আইকন যা ব্লার হবে না */}
+                                 <MdRemoveRedEye className="text-3xl absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100  transition-opacity duration-300" />
+                               </Link>
                 <button className="btn w-full mt-4 py-3 text-lg font-semibold">
                   ADD TO CART
                 </button>
